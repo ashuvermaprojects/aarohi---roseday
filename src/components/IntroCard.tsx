@@ -79,7 +79,7 @@ const IntroCard = ({ onContinue }: IntroCardProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.7 }}
         >
-          Hey You!
+          Hey Miss
         </motion.h1>
 
         <motion.div
@@ -123,7 +123,7 @@ const IntroCard = ({ onContinue }: IntroCardProps) => {
           whileHover={{ scale: 1.06, y: -3 }}
           whileTap={{ scale: 0.95 }}
         >
-          What is it? 🌸
+         Wanna see? 🌸
         </motion.button>
       </motion.div>
     </motion.div>

@@ -9,14 +9,16 @@ How much you matter to me,
 And how precious you are in my eyes <3.`;
 
 const secondaryMessage = `You're really special in ways words can never explain.`;
+const thankYouMessage = `Thank you so much for being in my life ♥️`;
 
 const MessageReveal = () => {
   const [displayedText, setDisplayedText] = useState("");
   const [showSecondary, setShowSecondary] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
   const [done, setDone] = useState(false);
-
   useEffect(() => {
     let i = 0;
+    const timers: Array<number | ReturnType<typeof setTimeout>> = [];
     const interval = setInterval(() => {
       if (i < mainMessage.length) {
         setDisplayedText(mainMessage.slice(0, i + 1));
@@ -24,11 +26,17 @@ const MessageReveal = () => {
       } else {
         clearInterval(interval);
         setDone(true);
-        setTimeout(() => setShowSecondary(true), 3000);
+        // show thank-you immediately after typing finishes
+        timers.push(setTimeout(() => setShowThankYou(true), 0));
+        // show secondary 1 second after thank-you appears
+        timers.push(setTimeout(() => setShowSecondary(true), 1000));
       }
     }, 50);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      timers.forEach((t) => clearTimeout(t as number));
+    };
   }, []);
 
   return (
@@ -60,9 +68,23 @@ const MessageReveal = () => {
       </motion.div>
 
       <AnimatePresence>
+        {showThankYou && (
+          <motion.p
+            className="font-cursive text-2xl sm:text-3xl md:text-4xl text-foreground text-glow text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.0 }}
+          >
+            {thankYouMessage}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {showSecondary && (
           <motion.p
-            className="font-serif text-lg sm:text-xl text-muted-foreground italic text-center"
+            className="font-serif text-lg sm:text-xl text-muted-foreground italic text-center mt-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}

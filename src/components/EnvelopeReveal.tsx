@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface EnvelopeRevealProps {
@@ -7,6 +7,44 @@ interface EnvelopeRevealProps {
 
 const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
   const [opened, setOpened] = useState(false);
+  const [introPlaying, setIntroPlaying] = useState(false);
+  const [showText1, setShowText1] = useState(false);
+  const [showText2, setShowText2] = useState(false);
+  const [overlayFade, setOverlayFade] = useState(false);
+
+  useEffect(() => {
+    const timers: Array<number | ReturnType<typeof setTimeout>> = [];
+    if (introPlaying) {
+      // sequence timings roughly matching the provided GSAP timeline
+      setShowText1(true);
+
+      // hide text1 after 3s
+      timers.push(setTimeout(() => setShowText1(false), 3000));
+
+      // show text2 after 3.5s
+      timers.push(setTimeout(() => setShowText2(true), 3500));
+
+      // hide text2 after 3.5s + 4s
+      timers.push(setTimeout(() => setShowText2(false), 3500 + 4000));
+
+      // start overlay fade after text2 finishes (approx)
+      timers.push(setTimeout(() => setOverlayFade(true), 3500 + 4000 + 500));
+
+      // finally call onContinue after overlay faded
+      timers.push(
+        setTimeout(() => {
+          setIntroPlaying(false);
+          setOverlayFade(false);
+          // proceed to next stage
+          onContinue();
+        }, 3500 + 4000 + 500 + 1500)
+      );
+    }
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t as number));
+    };
+  }, [introPlaying, onContinue]);
 
   return (
     <motion.div
@@ -22,7 +60,7 @@ const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
-        So, i've something to tell You 🥰
+        Okay so, i've smth to tell You 🥰
       </motion.p>
 
       {!opened && (
@@ -43,8 +81,10 @@ const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
           background: "linear-gradient(to bottom, hsl(var(--rose-blush)), hsl(var(--primary)))",
           boxShadow: "0 15px 35px hsl(var(--primary) / 0.25)",
         }}
-        onClick={() => !opened && setOpened(true)}
-        whileHover={!opened ? { y: -8, scale: 1.02 } : {}}
+        onClick={() => {
+          if (!opened) setOpened(true);
+        }}
+        whileHover={!opened && !introPlaying ? { y: -8, scale: 1.02 } : {}}
         transition={{ duration: 0.4 }}
       >
         {/* Envelope flap pattern */}
@@ -68,7 +108,7 @@ const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
           </motion.span>
         )}
 
-        {/* Letter inside */}
+        {/* Letter inside - only show after introPlaying sequence completes (opened === true) */}
         <AnimatePresence>
           {opened && (
             <motion.div
@@ -83,7 +123,7 @@ const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                Dear PeriPeri
+                Dear aarohi
               </motion.h3>
               <motion.p
                 className="font-serif text-xs sm:text-sm text-muted-foreground leading-relaxed"
@@ -99,16 +139,64 @@ const EnvelopeReveal = ({ onContinue }: EnvelopeRevealProps) => {
         </AnimatePresence>
       </motion.div>
 
+      {/* Cinematic intro overlay triggered on envelope click */}
+      <AnimatePresence>
+        {introPlaying && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center flex-col bg-black z-50"
+            initial={{ opacity: 1 }}
+            animate={overlayFade ? { opacity: 0 } : { opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+          >
+            <motion.div
+              className="cinematic-text text-white text-center max-w-xl px-6"
+              style={{
+                fontFamily: "Cinzel, serif",
+                fontSize: "1.4rem",
+                pointerEvents: "none",
+                textShadow: "0 0 15px rgba(255,255,255,0.75)",
+                letterSpacing: "1px",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={showText1 ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              A Veryyyy Happy Rose Dayyy!!
+            </motion.div>
+
+            <motion.div
+              className="cinematic-text text-white text-center max-w-xl px-6 mt-4"
+              style={{
+                fontFamily: "Cinzel, serif",
+                fontSize: "1.05rem",
+                pointerEvents: "none",
+                textShadow: "0 0 12px rgba(255,255,255,0.6)",
+                letterSpacing: "0.6px",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={showText2 ? { opacity: 1, y: 0 } : { opacity: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              To the prettiesttt <i>Rose</i> i knowwww 😊🌹<br />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Continue button */}
       <AnimatePresence>
         {opened && (
           <motion.button
-            onClick={onContinue}
+            onClick={() => {
+              if (!introPlaying) setIntroPlaying(true);
+            }}
             className="mt-8 font-serif text-lg text-primary hover:text-foreground transition-colors"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.5 }}
             whileHover={{ x: 5 }}
+            disabled={introPlaying}
           >
             So i want to wish you →
           </motion.button>

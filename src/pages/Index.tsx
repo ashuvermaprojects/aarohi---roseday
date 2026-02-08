@@ -95,11 +95,12 @@ const Index = () => {
             >
               <motion.h1
                 className="font-cursive text-4xl sm:text-5xl md:text-6xl text-foreground text-glow mb-8 text-center"
+                style={{ position: "relative", zIndex: 60 }}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 1 }}
               >
-                A Very Happy Rose Day
+                Happy Rose Day
               </motion.h1>
               <HeroRose onBloom={handleBloom} />
             </motion.div>
@@ -119,14 +120,14 @@ const Index = () => {
                 className="font-cursive text-2xl sm:text-3xl md:text-4xl text-foreground text-glow text-center mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 5, duration: 1 }}
+                transition={{ delay: 13, duration: 1 }}
               >
-                Thankyou so much ♥️
+                
               </motion.p>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 6.5, duration: 0.8 }}
+                transition={{ delay: 13.5, duration: 0.8 }}
               >
                 <KeepRoseButton onClick={handleKeepRose} />
               </motion.div>
@@ -182,7 +183,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 3, duration: 1.5 }}
         >
-          Since 21st May 2007, this rose is blooming.
+          Since 24th june 2008, this rose is just keep blooming.
         </motion.p>
       </main>
 

@@ -7,11 +7,12 @@ interface WateringStageProps {
 }
 
 const messages = [
-  "Look what i brought for you, Let's plant this seed! 🌱",
-  "Watering it will help it grow! 💧",
+  "Look! what i've brought for you. a seed, Let's plant it 🌱",
+  "See! it's growing!",
+  "Keep watering, there's a surprise! ",
   "A little more efforts… <3",
   "Almost there… !!",
-  "Aww, you did it! it's blooming! 🌹",
+  "Aww, you did it! it's blooming! A rose just like you 🌹",
 ];
 
 /* ---- Enhanced SVG Rose Bud ---- */
@@ -193,11 +194,13 @@ const WateringStage = ({ onComplete }: WateringStageProps) => {
     setProgress(newProgress);
 
     if (newProgress >= 100) {
-      setTimeout(onComplete, 2200);
+      // Pause for 3 seconds so the final message "Aww, you did it..." can be read
+      // before proceeding (previously 2200ms).
+      setTimeout(onComplete, 3000);
     }
   }, [progress, onComplete]);
 
-  const messageIndex = Math.min(Math.floor(progress / 25), messages.length - 1);
+  const messageIndex = Math.min(Math.floor(progress / 20), messages.length - 1);
   const stemHeight = (progress / 100) * 180;
   const showLeaf1 = progress >= 40;
   const showLeaf2 = progress >= 60;

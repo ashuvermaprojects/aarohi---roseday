@@ -43,7 +43,7 @@ const MemoryCard = ({ revealDelay = 0 }: MemoryCardProps) => {
             />
           </div>
           <p className="font-serif text-muted-foreground italic text-center text-sm sm:text-base max-w-xs">
-            "The most beautiful rose in the garden."
+            "The most precious, anyone can have 💕."
           </p>
         </motion.div>
       )}
