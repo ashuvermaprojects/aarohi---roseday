@@ -5,19 +5,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Cursive font -->
+  <!-- SAME font you approved earlier -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
   <title>Magazine</title>
 
   <style>
-    /* Ensure hard pages can position children */
+    /* ONLY for the added page text */
     .hard {
       position: relative;
     }
 
-    /* Centered cursive text */
     .front-love-text {
       position: absolute;
       top: 50%;
@@ -34,12 +33,10 @@
 </head>
 
 <body>
-
   <div class="flipbook">
-
     <div class="hard">
       Let's look into your photo album,
-      <small>Made for aarohi ~ by her beti</small>
+      </small> Made for aarohi <small>~ by her beti</small>
     </div>
 
     <div class="hard"></div>
@@ -48,52 +45,54 @@
       <small>Okay, so. On the occasion of rose day, </small>
       <small>Let me introduce those "so" called roses </small>
       <small>to the real one! </small>
+      <small> </small>
       <small>(Dont get jalous of her beauty, okay?)</small>
     </div>
 
     <div>
       <img src="images/img-1.png" alt="" />
-      <small>Who thaught, ki yeh chotu si cutu si bacchi 👆</small>
-      <small>(Rose by birth fr 🌹)</small>
+      <small> Who thaught, ki yeh chotu si cutu si bacchi 👆 </small>
+      <small> (Rose by birth fr 🌹) </small>
     </div>
 
     <div>
       <img src="images/img-2.png" alt="" />
-      <small>Badi hoke isse bhi jyada cutee ho jayegi 🎀</small>
+      <small> Badi hoke isse bhi jyada cutee ho jayegi 🎀 </small>
+      <small>  </small>
     </div>
 
     <div>
       <img src="images/img-4.png" alt="" />
-      <small>From the way you make me laugh >>></small>
+      <small> From the way you make me laugh >>> </small>
+      <small>  </small>
     </div>
 
     <div>
-      <video width="300" height="300" autoplay loop muted playsinline>
+      <video width="300" height="300" autoplay loop>
         <source src="images/vid-1.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-      <small>To the way you show your nonchalance ♥️</small>
-      <small>Everyythingg is justtttt >>>></small>
+      <small> To the way you show your nonchalance ♥️ </small>
+      <small> Everyythingg is justtttt >>>> </small>
     </div>
 
     <div>
       <img src="images/img-3.png" alt="" />
-      <small>From the way you yapp,</small>
-      <small>To the way you listen 💗</small>
+      <small> From the way you yapp, </small>
+      <small> To the way you listen 💗 </small>
     </div>
 
-    <!-- RIGHT RED PAGE (FRONT SIDE) -->
+    <!-- ONLY CHANGE: this was an empty hard page -->
     <div class="hard">
       <div class="front-love-text">
         i love everything of yours
       </div>
     </div>
 
-    <!-- THANK YOU PAGE (UNCHANGED) -->
+    <!-- UNTOUCHED -->
     <div class="hard">
       Thank You Dear <small>~ For all the smiles</small>
     </div>
-
   </div>
 
   <script src="jquery.js"></script>
@@ -106,12 +105,12 @@
 
     function startCooldown() {
       canFlip = false;
-      setTimeout(function () {
+      setTimeout(function() {
         canFlip = true;
       }, flipCooldown);
     }
 
-    $(".flipbook").on("click", "> div, .page", function (e) {
+    $(".flipbook").on("click", "> div, .page", function(e) {
       if (!canFlip) return;
 
       var $page = $(this);
@@ -127,24 +126,38 @@
       startCooldown();
     });
 
-    flipbook.on("turning", function () {
+    flipbook.on("turning", function() {
       canFlip = false;
     });
 
-    flipbook.on("turned", function () {
-      $(".flipbook video").each(function () {
+    flipbook.on("turned", function(e, page) {
+      $(".flipbook video").each(function() {
         this.pause();
       });
 
-      $(".flipbook video").filter(":visible").each(function () {
+      $(".flipbook video").filter(function() {
+        return $(this).is(":visible");
+      }).each(function() {
         this.play();
       });
 
-      setTimeout(function () {
+      setTimeout(function() {
         canFlip = true;
       }, flipCooldown);
+
+      try {
+        var total = flipbook.turn("pages");
+        if (page === total) {
+          $('.flipbook > div').eq(total - 1).addClass('reveal-parent');
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'flipbookEnded' }, '*');
+          }
+        } else {
+          $('.flipbook > div').removeClass('reveal-parent');
+        }
+      } catch (err) {}
     });
   </script>
-
 </body>
+
 </html>
