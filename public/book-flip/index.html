@@ -4,53 +4,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Cursive font -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
   <title>Magazine</title>
+
+  <style>
+    /* Ensure hard pages can position children */
+    .hard {
+      position: relative;
+    }
+
+    /* Centered cursive text */
+    .front-love-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.6rem;
+      color: #640303;
+      text-align: center;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="flipbook">
-    <div class="hard">Let's look into your photo album,
 
-    </small> Made for aarohi <small>~ by her beti</small></div>
+  <div class="flipbook">
+
+    <div class="hard">
+      Let's look into your photo album,
+      <small>Made for aarohi ~ by her beti</small>
+    </div>
+
     <div class="hard"></div>
+
     <div>
       <small>Okay, so. On the occasion of rose day, </small>
       <small>Let me introduce those "so" called roses </small>
       <small>to the real one! </small>
-      <small> </small>
       <small>(Dont get jalous of her beauty, okay?)</small>
     </div>
+
     <div>
       <img src="images/img-1.png" alt="" />
-      <small> Who thaught, ki yeh chotu si cutu si bacchi 👆 </small>
-      <small> (Rose by birth fr 🌹) </small>
+      <small>Who thaught, ki yeh chotu si cutu si bacchi 👆</small>
+      <small>(Rose by birth fr 🌹)</small>
     </div>
+
     <div>
       <img src="images/img-2.png" alt="" />
-      <small> Badi hoke isse bhi jyada cutee ho jayegi 🎀 </small>
-      <small>  </small>
+      <small>Badi hoke isse bhi jyada cutee ho jayegi 🎀</small>
     </div>
+
     <div>
       <img src="images/img-4.png" alt="" />
-      <small> From the way you make me laugh >>> </small>
-      <small>  </small>
+      <small>From the way you make me laugh >>></small>
     </div>
+
     <div>
-      <video width="300" height="300" autoplay loop>
+      <video width="300" height="300" autoplay loop muted playsinline>
         <source src="images/vid-1.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-      <small> To the way you show your nonchalance ♥️ </small>
-      <small> Everyythingg is justtttt >>>> </small>
+      <small>To the way you show your nonchalance ♥️</small>
+      <small>Everyythingg is justtttt >>>></small>
     </div>
+
     <div>
       <img src="images/img-3.png" alt="" />
-      <small> From the way you yapp, </small>
-      <small> To the way you listen 💗 </small>
+      <small>From the way you yapp,</small>
+      <small>To the way you listen 💗</small>
     </div>
-    <div class="hard"></div>
-    <div class="hard">Thank You Dear <small>~ For all the smiles</small></div>
+
+    <!-- RIGHT RED PAGE (FRONT SIDE) -->
+    <div class="hard">
+      <div class="front-love-text">
+        i love everything of yours
+      </div>
+    </div>
+
+    <!-- THANK YOU PAGE (UNCHANGED) -->
+    <div class="hard">
+      Thank You Dear <small>~ For all the smiles</small>
+    </div>
+
   </div>
 
   <script src="jquery.js"></script>
@@ -58,19 +101,17 @@
   <script>
     var flipbook = $(".flipbook").turn();
 
-    // Cooldown to prevent rapid double-flips (1 second)
     var canFlip = true;
-    var flipCooldown = 1000; // milliseconds
+    var flipCooldown = 1000;
 
     function startCooldown() {
       canFlip = false;
-      setTimeout(function() {
+      setTimeout(function () {
         canFlip = true;
       }, flipCooldown);
     }
 
-    // Handle page clicks for flipping (delegated)
-    $(".flipbook").on("click", "> div, .page", function(e) {
+    $(".flipbook").on("click", "> div, .page", function (e) {
       if (!canFlip) return;
 
       var $page = $(this);
@@ -83,51 +124,27 @@
         flipbook.turn("next");
       }
 
-      // start cooldown immediately after initiating a flip
       startCooldown();
     });
 
-    // Prevent flips while the plugin is processing a turn
-    flipbook.on("turning", function() {
+    flipbook.on("turning", function () {
       canFlip = false;
     });
 
-    // Auto-play video when page turns and re-enable flipping after cooldown
-    flipbook.on("turned", function(e, page) {
-      // Stop all videos
-      $(".flipbook video").each(function() {
+    flipbook.on("turned", function () {
+      $(".flipbook video").each(function () {
         this.pause();
       });
 
-      // Play only visible videos
-      $(".flipbook video").filter(function() {
-        return $(this).is(":visible");
-      }).each(function() {
+      $(".flipbook video").filter(":visible").each(function () {
         this.play();
       });
 
-      // Ensure flipping is re-enabled after cooldown
-      setTimeout(function() {
+      setTimeout(function () {
         canFlip = true;
       }, flipCooldown);
-      // detect last page and notify parent / reveal parent behind last page
-      try {
-        var total = flipbook.turn("pages");
-        if (page === total) {
-          // add class to last page to make it reveal-transparent
-          $('.flipbook > div').eq(total - 1).addClass('reveal-parent');
-          if (window.parent && window.parent !== window) {
-            // use wildcard origin so parent receives the message regardless of dev server port/origin
-            window.parent.postMessage({ type: 'flipbookEnded' }, '*');
-          }
-        } else {
-          $('.flipbook > div').removeClass('reveal-parent');
-        }
-      } catch (err) {
-        // ignore
-      }
     });
   </script>
-</body>
 
+</body>
 </html>
